@@ -88,7 +88,7 @@ void CreatePotTable()
 }
 
 
-int CheckForLabel(char * inst , int n , int stcounter , int lc)
+int CheckForLabel(char * inst , int n , int *stcounter , int lc)
 {
 	char labelcheck[20];
 	int labelflag=0;
@@ -97,7 +97,7 @@ int CheckForLabel(char * inst , int n , int stcounter , int lc)
 	for(i=0;i<n;i++)
 		{
 			labelcheck[z++]=inst[i];
-			if(inst[i]==':')
+			if(inst[i+1]==':')
 				{
 					labelflag=1;
 					break;
@@ -112,9 +112,9 @@ int CheckForLabel(char * inst , int n , int stcounter , int lc)
 		}
 	else
 		{
-			strcpy(SymbolTable[stcounter].name,labelcheck);
-			SymbolTable[stcounter++].location=lc;
-
+			strcpy(SymbolTable[*stcounter].name,labelcheck);
+			SymbolTable[*stcounter].location=lc;
+			(*stcounter)++;
 			return z;
 		}			
 
@@ -192,16 +192,17 @@ int main()
 	int labelflag,z=0;
 
 	// Checking for presence of Label
-	labelflag=CheckForLabel(inst , strlen(inst),stcounter,lc);
+	labelflag=CheckForLabel(inst , strlen(inst),&stcounter,lc);
 	
 		if(labelflag==-1)
 			i=0;
 		else
 			i=labelflag;
 			
-	while(inst[i]==' ')
+	while(inst[i]==' ' || inst[i]==':')
 		i++;	
 
+	//printf("I=%d " , i);
 
 	// Finding OPCODE of Imperative Statement if present
 	char is[20];
@@ -222,8 +223,83 @@ int main()
 
 
         }
+	
+	
+	//Branching Statement
+	if(j==7)
+		{
+			
+			char bckeyword[20];
+			z=0;
+			while(inst[i]==' ')
+				i++;
 
-        if(isflag==0)
+
+			for(;i<strlen(inst)&&inst[i]!=' ';i++)
+				bckeyword[z++]=inst[i];
+
+			bckeyword[z]='\0';
+
+			if(strcmp(bckeyword,"LT")==0)
+				{
+					printf("1 ");
+				}
+			else if(strcmp(bckeyword,"LE")==0)
+				{
+					printf("2 ");
+				}
+			else if(strcmp(bckeyword,"EQ")==0)
+				{
+					printf("3 ");
+				}
+			else if(strcmp(bckeyword,"GT")==0)
+				{
+					printf("4 ");
+				}
+			else if(strcmp(bckeyword,"GE")==0)
+				{
+					printf("5 ");
+				}
+			else if(strcmp(bckeyword,"ANY")==0)
+				{
+					printf("6 ");
+				}
+
+
+
+			while(inst[i]==' ')
+				i++;
+			
+			//Jumping to Label
+		
+			char label[20];
+			z=0;
+			
+			for(;i<strlen(inst)&&inst[i]>='A' && inst[i]<='Z';i++)
+				label[z++]=inst[i];
+
+			label[z]='\0';
+			int labelflag=0;
+			
+			for(j=0;j<stcounter;j++)
+				if(strcmp(SymbolTable[j].name,label)==0)
+					{
+						printf("%d ",SymbolTable[j].location);
+						labelflag=1;
+						continue;
+					}
+
+			if(labelflag==0)
+					{
+						strcpy(SymbolTable[stcounter].name,label);
+						SymbolTable[stcounter].location=-1;
+						printf("<%s> ",SymbolTable[stcounter++].name);
+						continue;
+					}
+			
+		}
+
+        /*if(isflag==0)
             {
 		// Testing in POT Table		
 			for(j=0;j<5;j++)
@@ -231,13 +307,16 @@ int main()
 					if(strcmp(is , PotTable[j].name)==0)
 						{
 				    			isflag=1;
-				   			printf("%d ",PotTable[j].opcode);
+				   			
 				    			break;
 						}
 				}
 
 
-			if(
+			if(isflag==1)
+				{
+				  //Routine for Handling Assembler Directives
+				}
 
 		if(isflag==0)
 			{
@@ -245,7 +324,7 @@ int main()
 				exit(0);
 			}
 
-	    }
+	    }*/
 
 	
 	//Checking for Register
@@ -315,7 +394,7 @@ int main()
 								printf("%d ",LiteralTable[j].location);
 							}
 					
-						else printf("%s ",LitSym);
+						else printf("<%s> ",LitSym);
 
 						LitSymFlag=1;
 					}
@@ -324,7 +403,7 @@ int main()
 				{
 					strcpy(LiteralTable[ltcounter].name,LitSym);
 					LiteralTable[ltcounter].location=-1;
-					printf("%s ",LiteralTable[ltcounter++].name);	
+					printf("<%s> ",LiteralTable[ltcounter++].name);	
 				}	
 		}
 	else
@@ -338,7 +417,7 @@ int main()
 								printf("%d ",LiteralTable[j].location);
 							}
 					
-						else printf("%s ",LitSym);
+						else printf("<%s> ",LitSym);
 
 						LitSymFlag=1;
 					}
@@ -348,7 +427,7 @@ int main()
 					
 					strcpy(SymbolTable[stcounter].name,LitSym);
 					SymbolTable[stcounter].location=-1;
-					printf("%s ",SymbolTable[stcounter++].name);	
+					printf("<%s> ",SymbolTable[stcounter++].name);	
 				}
 		}
 
