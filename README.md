@@ -43,3 +43,5 @@ MULT CREG,B </br>
 ORIGIN LAST+1 </br>
 BACK: EQU LOOP </br>
 END </br>
+
+<strong> Reference : System Programming and Operating Systems by DM Dhamdere </strong>
