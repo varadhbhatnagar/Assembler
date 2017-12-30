@@ -3,7 +3,6 @@ Assembler for a Simple Instruction Set written in C
 
 The Instruction Set is as follows :
 
-OPCODE     IMPERATIVE-STATEMENT
 0          STOP
 1          ADD
 2          SUBTRACT
@@ -18,10 +17,27 @@ OPCODE     IMPERATIVE-STATEMENT
 
 
 The Assembler Directives to be used are :
-ASSEMBLER DIRECTIVE
 
 START
 LTORG
 EQU
 ORIGIN
+END
+
+Sample Code :
+START 200
+MOVER AREG, '=5'
+MOVEM AREG, A
+LOOP: MOVER AREG,A
+MOVER CREG, B
+ADD CREG , '=1'
+BC ANY NEXT
+LTORG
+NEXT: SUB AREG , '=1'
+BC LT BACK
+LAST: STOP
+ORIGIN LOOP+2
+MULT CREG,B
+ORIGIN LAST+1
+BACK: EQU LOOP
 END
