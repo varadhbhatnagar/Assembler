@@ -3,7 +3,7 @@ Assembler for a Simple Instruction Set written in C
 
 The Instruction Set is as follows :
 
-0          STOP
+0          STOP         </br>
 1          ADD
 2          SUBTRACT
 3          MULT
