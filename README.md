@@ -4,8 +4,8 @@ Assembler for a Simple Instruction Set written in C
 The Instruction Set is as follows : </br>
 OPCODE     IMPERATIVE STATEMENT :  </br>
                     		 </br>
-0          STOP         </br>
-1          ADD </br>
+0           STOP         </br>
+1           ADD </br>
 2          SUBTRACT </br>
 3          MULT </br>
 4          MOVER </br>
