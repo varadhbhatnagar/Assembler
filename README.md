@@ -2,42 +2,44 @@
 Assembler for a Simple Instruction Set written in C
 
 The Instruction Set is as follows :
-
+OPCODE     IMPERATIVE STATEMENT :  </br>
+                    		 </br>
 0          STOP         </br>
-1          ADD
-2          SUBTRACT
-3          MULT
-4          MOVER
-5          MOVEM
-6          COMP
-7          BC
-8          DIV
-9          READ
-10         PRINT
+1          ADD </br>
+2          SUBTRACT </br>
+3          MULT </br>
+4          MOVER </br>
+5          MOVEM </br>
+6          COMP </br>
+7          BC </br>
+8          DIV </br>
+9          READ </br>
+10         PRINT </br>
+ </br>
+ </br>
+The Assembler Directives to be used are : </br>
 
+START </br>
+LTORG </br>
+EQU </br>
+ORIGIN </br>
+END </br>
 
-The Assembler Directives to be used are :
-
-START
-LTORG
-EQU
-ORIGIN
-END
-
-Sample Code :
-START 200
-MOVER AREG, '=5'
-MOVEM AREG, A
-LOOP: MOVER AREG,A
-MOVER CREG, B
-ADD CREG , '=1'
-BC ANY NEXT
-LTORG
-NEXT: SUB AREG , '=1'
-BC LT BACK
-LAST: STOP 
-ORIGIN LOOP+2
-MULT CREG,B
-ORIGIN LAST+1
-BACK: EQU LOOP
-END
+Sample Code : </br>
+ </br>
+START 200 </br>
+MOVER AREG, '=5' </br>
+MOVEM AREG, A </br>
+LOOP: MOVER AREG,A </br>
+MOVER CREG, B </br>
+ADD CREG , '=1' </br>
+BC ANY NEXT </br>
+LTORG </br>
+NEXT: SUB AREG , '=1' </br>
+BC LT BACK </br>
+LAST: STOP  </br>
+ORIGIN LOOP+2 </br>
+MULT CREG,B </br>
+ORIGIN LAST+1 </br>
+BACK: EQU LOOP </br>
+END </br>
