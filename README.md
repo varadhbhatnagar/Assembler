@@ -1,7 +1,7 @@
 # Assembler
 Assembler for a Simple Instruction Set written in C
 
-The Instruction Set is as follows :
+The Instruction Set is as follows : </br>
 OPCODE     IMPERATIVE STATEMENT :  </br>
                     		 </br>
 0          STOP         </br>
