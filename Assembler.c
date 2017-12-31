@@ -1,4 +1,13 @@
-//Made by Varad Bhatnagar
+/*
+Made by Varad Bhatnagar
+
+General Flow of Control :
+
+	1. Check for Label
+	2. Check of Imperative Statement / Assembler Directive
+	3. Check for Register Type
+	4. Check for Symbol / Literal
+*/
 
 #include<stdio.h>
 #include<string.h>
@@ -23,6 +32,7 @@ struct SymbolTableEntry
 {
 	char name[20];
 	int location;
+	int value;
 } SymbolTable[20];
 
 struct LiteralTableEntry
@@ -177,7 +187,7 @@ int main()
 
     PoolTable[0].batch=0;
 
-    int lc=0 , stcounter=0,j,ltcounter=0,ptcounter=0;
+    int lc=0 , stcounter=0,j,ltcounter=0,ptcounter=0,stopcounter=0;
 
     char *inst=NULL;
     int len =20 , i;
@@ -209,6 +219,9 @@ int main()
         inst[siz]='\0';	
 	int labelflag,z=0;
 
+
+	
+
 	// Checking for presence of Label
 	labelflag=CheckForLabel(inst , strlen(inst),&stcounter,lc);
 	
@@ -236,7 +249,7 @@ int main()
             if(strcmp(is , MotTable[j].name)==0)
                 {
                     isflag=1;
-                    printf("%d ",MotTable[j].opcode);
+                    printf("<MOT,%d> ",MotTable[j].opcode);
                     break;
                 }
 
@@ -246,8 +259,11 @@ int main()
 	// STOP Statement
 	if(j==0)
 		{
-			printf("End of Code Section\n");
+			//printf("End of Code Section\n");
 			lc++;
+			printf("\n");
+
+			stopcounter =1;
 			
 			continue;
 
@@ -269,27 +285,27 @@ int main()
 
 			if(strcmp(bckeyword,"LT")==0)
 				{
-					printf("1 ");
+					printf("<BC,1> ");
 				}
 			else if(strcmp(bckeyword,"LE")==0)
 				{
-					printf("2 ");
+					printf("<BC,2> ");
 				}
 			else if(strcmp(bckeyword,"EQ")==0)
 				{
-					printf("3 ");
+					printf("<BC,3> ");
 				}
 			else if(strcmp(bckeyword,"GT")==0)
 				{
-					printf("4 ");
+					printf("<BC,4> ");
 				}
 			else if(strcmp(bckeyword,"GE")==0)
 				{
-					printf("5 ");
+					printf("<BC,5> ");
 				}
 			else if(strcmp(bckeyword,"ANY")==0)
 				{
-					printf("6 ");
+					printf("<BC,6> ");
 				}
 
 
@@ -311,9 +327,10 @@ int main()
 			for(j=0;j<stcounter;j++)
 				if(strcmp(SymbolTable[j].name,label)==0)
 					{
-						printf("%d ",SymbolTable[j].location);
+						printf("<ST,%d> ",j);
 						labelflag=1;
-						printf("  %d\n",lc);
+						//printf("  %d\n",lc);
+						printf("\n");
 						lc++;
 						
 						continue;
@@ -323,9 +340,10 @@ int main()
 					{
 						strcpy(SymbolTable[stcounter].name,label);
 						SymbolTable[stcounter].location=-1;
-						printf("<%s> ",SymbolTable[stcounter++].name);
+						printf("<ST,%d> ",stcounter++);
 						
-						printf("  %d \n",lc);
+						//printf("  %d \n",lc);
+						printf("\n");
 						lc++;
 						continue;
 					}
@@ -446,11 +464,11 @@ int main()
 									}
 							}
 
-					/*
-						//Printing Symbol Table to check
+					
+					/*//Printing Symbol Table to check
 					
 						for(j=0;j<stcounter;j++)
-							printf("%s %d\n", SymbolTable[j].name , SymbolTable[j].location);
+							printf("%s %d %d\n", SymbolTable[j].name , SymbolTable[j].location , SymbolTable[j].value );
 			
 						//Printing Literal Table to check			
 						
@@ -461,8 +479,8 @@ int main()
 
 						for(j=0;j<ptcounter;j++)
 							printf("%d \n" , PoolTable[j].batch);
+					
 					*/
-
 						exit(0);
 					}	
 			
@@ -510,7 +528,7 @@ int main()
 							
 										LiteralTable[k].location = lc;
 										lflag=1;
-										printf(" %d \n",lc);
+										//printf(" %d \n",lc);
 										lc++;
 									}
 							}
@@ -523,6 +541,78 @@ int main()
 					}
 		
 				}
+		if(isflag==0)
+				{
+					// If STOP has already been reached
+
+					if(stopcounter==1)
+			{
+				char la[20],dcds[20];
+				int ind=0,value=0;
+				for(i=0;i<inst[i] && inst[i]!=' ';i++)
+					{
+						la[ind++]=inst[i];
+					}
+			
+				la[ind]='\0';
+				ind=0;
+				while(inst[i]==' ')
+					i++;
+
+				
+				for(;i<inst[i]&&inst[i]!=' ';i++)
+					{
+						dcds[ind++]=inst[i];
+					}
+
+				dcds[ind]='\0';
+
+
+
+				while(inst[i]==' ')
+					i++;	
+
+				for(;i<inst[i]&&inst[i]!=' ';i++)
+					{
+						value*=10;
+						value+=(inst[i]-'0');
+					}		
+
+				if(strcmp(dcds , "DC")==0)
+					{
+						for(j=0;j<stcounter;j++)
+							{
+								if(strcmp(SymbolTable[j].name,la)==0)
+									{
+										SymbolTable[j].location = lc;
+										lc++;
+										SymbolTable[j].value = value;
+										break;
+									}
+							}
+					}
+
+				if(strcmp(dcds , "DS")==0)
+					{
+						for(j=0;j<stcounter;j++)
+							{
+								if(strcmp(SymbolTable[j].name,la)==0)
+									{
+										SymbolTable[j].location = lc;
+										lc+=(value);
+										//printf("%d " , lc);
+										break;
+									}
+							}
+					}
+
+				isflag=1;
+				continue;
+			}
+		}
+
+
+
 		if(isflag==0)
 			{
 				printf("\n %s instruction not found in MOT or POT" , is);
@@ -552,19 +642,19 @@ int main()
 
 		if(strcmp(registertype,"AREG")==0)
 			{ 	registerflag=1;
-				printf("1 ");
+				printf("<REG,1> ");
 			}
 		else if(strcmp(registertype,"BREG")==0)
 			{	registerflag=1;
-				printf("2 ");
+				printf("<REG,2> ");
 			}
 		else if(strcmp(registertype,"CREG")==0)
 			{	registerflag=1;
-				printf("3 ");
+				printf("<REG,3> ");
 			}
 		else if(strcmp(registertype,"DREG")==0)
 			{	registerflag=1;
-				printf("4 ");
+				printf("<REG,4> ");
 			}
 
 	}
@@ -594,12 +684,9 @@ int main()
 			for(j=PoolTable[ltcounter-1].batch;j<ltcounter;j++)
 				if(strcmp(LiteralTable[j].name,LitSym)==0)
 					{
-						if(LiteralTable[j].location!=-1)
-							{
-								printf("%d ",LiteralTable[j].location);
-							}
-					
-						else printf("<%s> ",LitSym);
+						
+								printf("<LT,%d> ",j);
+							
 
 						LitSymFlag=1;
 					}
@@ -609,7 +696,7 @@ int main()
 					
 					strcpy(LiteralTable[ltcounter].name,LitSym);
 					LiteralTable[ltcounter].location=-1;
-					printf("<%s> ",LiteralTable[ltcounter++].name);	
+					printf("<LT,%d> ",ltcounter++);	
 				}	
 		}
 	else
@@ -618,12 +705,9 @@ int main()
 			for(j=0;j<stcounter;j++)
 				if(strcmp(SymbolTable[j].name,LitSym)==0)
 					{
-						if(SymbolTable[j].location!=-1)
-							{
-								printf("%d ",LiteralTable[j].location);
-							}
-					
-						else printf("<%s> ",LitSym);
+						
+								printf("<ST,%d> ",j);
+							
 
 						LitSymFlag=1;
 					}
@@ -633,7 +717,7 @@ int main()
 					
 					strcpy(SymbolTable[stcounter].name,LitSym);
 					SymbolTable[stcounter].location=-1;
-					printf("<%s> ",SymbolTable[stcounter++].name);	
+					printf("<ST,%d> ",stcounter++);	
 				}
 		}
 
@@ -644,9 +728,11 @@ int main()
 		
 	
 	
-	printf("%d \n",lc);
+	//printf("%d \n",lc);
+	printf("\n");
 	lc++;	
     }
 
     return 0;
 }
+
