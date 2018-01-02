@@ -25,23 +25,6 @@ EQU </br>
 ORIGIN </br>
 END </br>
 
-Sample Code : </br>
- </br>
-START 200 </br>
-MOVER AREG, '=5' </br>
-MOVEM AREG, A </br>
-LOOP: MOVER AREG,A </br>
-MOVER CREG, B </br>
-ADD CREG , '=1' </br>
-BC ANY NEXT </br>
-LTORG </br>
-NEXT: SUB AREG , '=1' </br>
-BC LT BACK </br>
-LAST: STOP  </br>
-ORIGIN LOOP+2 </br>
-MULT CREG,B </br>
-ORIGIN LAST+1 </br>
-BACK: EQU LOOP </br>
-END </br>
+The given code can be tested for the two input files given in the repo.
 
 <strong> Reference : System Programming and Operating Systems by DM Dhamdere </strong>
