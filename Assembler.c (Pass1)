@@ -137,7 +137,7 @@ int CheckForLabel(char * inst , int n , int *stcounter , int lc)
 
 }
 
-int InitializeLocationCounter( char * inst , int n )
+int InitializeLocationCounter( char * inst , int n ,FILE* fp2)
 	{
 	    int lc=0,i;
 	    int siz = strlen(inst)-1;
@@ -161,7 +161,7 @@ int InitializeLocationCounter( char * inst , int n )
 					lc+=(inst[i]-'0');
 				}
 
-				printf("\n(AD,01) (C,%d)\n",lc);
+				fprintf(fp2,"\n(AD,01) (C,%d)\n",lc);
 			return lc;
 	    	}
 	   else {
@@ -184,8 +184,9 @@ int main()
 
     char *inst=NULL;
     int len =20 , i;
-    FILE* fp,fp2;
-    fp = fopen("input2.txt" , "r");
+    FILE* fp, *fp2;
+    fp = fopen("input.txt" , "r");
+    fp2 = fopen("outputic.txt" , "w");
 
     if(fp==NULL)
     {
@@ -198,7 +199,7 @@ int main()
 
     getline(&inst , &len , fp );
 
-    lc=InitializeLocationCounter(inst , strlen(inst) );
+    lc=InitializeLocationCounter(inst , strlen(inst) ,fp2);
 
 
 
@@ -206,7 +207,7 @@ int main()
    // Iterating through each statement
     while( getline(&inst , &len , fp ) != -1)
     {
-	printf("%d ",lc);
+	fprintf(fp2,"%d ",lc);
         int siz = strlen(inst)-1;
         int isflag=0,lf=0;
 	char label[20];
@@ -251,7 +252,7 @@ int main()
             if(strcmp(is , MotTable[j].name)==0)
                 {
                     isflag=1;
-                    printf("(IS,%.2d) ",MotTable[j].opcode);
+                    fprintf(fp2,"(IS,%.2d) ",MotTable[j].opcode);
                     break;
                 }
 
@@ -259,7 +260,7 @@ int main()
         }
 
 	if(j==0)
-		{	printf("\n");
+		{	fprintf(fp2,"\n");
 			lc++;
 			continue;
 		}
@@ -284,27 +285,27 @@ int main()
 
 			if(strcmp(bckeyword,"LT")==0)
 				{
-					printf("(1) ");
+					fprintf(fp2,"(1) ");
 				}
 			else if(strcmp(bckeyword,"LE")==0)
 				{
-					printf("(2) ");
+					fprintf(fp2,"(2) ");
 				}
 			else if(strcmp(bckeyword,"EQ")==0)
 				{
-					printf("(3) ");
+					fprintf(fp2,"(3) ");
 				}
 			else if(strcmp(bckeyword,"GT")==0)
 				{
-					printf("(4) ");
+					fprintf(fp2,"(4) ");
 				}
 			else if(strcmp(bckeyword,"GE")==0)
 				{
-					printf("(5) ");
+					fprintf(fp2,"(5) ");
 				}
 			else if(strcmp(bckeyword,"ANY")==0)
 				{
-					printf("(6) ");
+					fprintf(fp2,"(6) ");
 				}
 
 
@@ -326,10 +327,10 @@ int main()
 			for(j=1;j<stcounter;j++)
 				if(strcmp(SymbolTable[j].name,label)==0)
 					{
-						printf("(ST,%d) ",j);
+						fprintf(fp2,"(ST,%d) ",j);
 						labelflag=1;
 						//printf("  %d\n",lc);
-						printf("\n");
+						fprintf(fp2,"\n");
 						lc++;
 
 						continue;
@@ -339,10 +340,10 @@ int main()
 					{
 						strcpy(SymbolTable[stcounter].name,label);
 						SymbolTable[stcounter].location=-1;
-						printf("(ST,%d) ",stcounter++);
+						fprintf(fp2,"(ST,%d) ",stcounter++);
 
 						//printf("  %d \n",lc);
-						printf("\n");
+						fprintf(fp2,"\n");
 						lc++;
 						continue;
 					}
@@ -369,13 +370,13 @@ int main()
 				  if(j==0)
 					{
 						// Found START
-						printf("\n Error : START Assembler Directive found twice");
+						fprintf(fp2,"\n Error : START Assembler Directive found twice");
 					}
 				  else if(j==1)
 					{
 						// Found ORIGIN
 
-						printf("(AD,03) ");
+						fprintf(fp2,"(AD,03) ");
 						while(inst[i]==' ')
 							i++;
 
@@ -402,7 +403,7 @@ int main()
 
 						if(templcflag==0)
 							{
-								printf("\n Error in ORGIN statement syntax");
+								fprintf(fp2,"\n Error in ORGIN statement syntax");
 							}
 						else
 							{
@@ -416,10 +417,10 @@ int main()
 								
 								if(op3==-1)
 									{
-										printf("\n Invalid location Specified by ORIGIN");
+										fprintf(fp2,"\n Invalid location Specified by ORIGIN");
 									}
 				
-								printf("(ST,%d) %c (C,%d)\n", j,op , op2);
+								fprintf(fp2,"(ST,%d) %c (C,%d)\n", j,op , op2);
 								
 
 								if(op=='+')
@@ -439,7 +440,7 @@ int main()
 				else if(j==2)
 					{
 						//Found END
-						printf("(AD,02) \n");
+						fprintf(fp2,"(AD,02) \n");
 						int k;
 						for(k=1;k<ltcounter;k++)
 							{
@@ -540,7 +541,7 @@ int main()
 							}
 							
 
-						//printf("%s",eq);
+						
 
 						int k;
 						for(k=1;k<stcounter;k++)
@@ -550,6 +551,7 @@ int main()
 									a=k;
 									break;
 								}
+
 				
 						for(k=1;k<stcounter;k++)
 							if(strcmp(SymbolTable[k].name,label)==0)
@@ -561,16 +563,16 @@ int main()
 							
 
 						if(val==0)
-							printf("(AD,04) (ST,%d)\n",a);
+							fprintf(fp2,"(AD,04) (ST,%d)\n",a);
 						else
-							printf("(AD,04) (ST,%d) %c (C,%d)\n",a,op,val);
+							fprintf(fp2,"(AD,04) (ST,%d) %c (C,%d)\n",a,op,val);
 						continue;
 					}
 
 				else if(j==4)
 					{
 						//Found LTORG
-						printf("(AD,05) \n");
+						fprintf(fp2,"(AD,05) \n");
 						int lflag=0;
 						int k;
 						for(k=1;k<ltcounter;k++)
@@ -635,7 +637,7 @@ int main()
 										SymbolTable[j].location = lc;
 										lc++;
 										isflag=1;
-										printf("(ST,%d) (DL,1) (C,%d) \n",j ,value);
+										fprintf(fp2,"(ST,%d) (DL,1) (C,%d) \n",j ,value);
 										break;
 									}
 							}
@@ -646,7 +648,7 @@ int main()
 								strcpy(SymbolTable[stcounter].name,is);
 								SymbolTable[stcounter++].location = lc;
 								isflag=1;
-								printf("(ST,%d) (DL,1) (C,%d) \n",j ,value);
+								fprintf(fp2,"(ST,%d) (DL,1) (C,%d) \n",j ,value);
 								lc++;
 							}
 					}
@@ -660,7 +662,7 @@ int main()
 										SymbolTable[j].location = lc;
 										lc+=(value);
 										isflag=1;
-										printf("(ST,%d) (DL,2) (C,%d) \n",j ,value);
+										fprintf(fp2,"(ST,%d) (DL,2) (C,%d) \n",j ,value);
 										break;
 									}
 							}
@@ -670,7 +672,7 @@ int main()
 								strcpy(SymbolTable[stcounter].name,is);
 								SymbolTable[stcounter++].location = lc;
 								isflag=1;
-								printf("(ST,%d) (DL,1) (C,%d) \n",j ,value);
+								fprintf(fp2,"(ST,%d) (DL,1) (C,%d) \n",j ,value);
 								lc+=value;
 							}
 
@@ -686,7 +688,7 @@ int main()
 
 			if( isflag==0)
 				{
-					printf("\n Error in statement %s \n", inst);
+					fprintf(fp2,"\n Error in statement %s \n", inst);
 				}
 
 	    }
@@ -712,19 +714,19 @@ int main()
 
 		if(strcmp(registertype,"AREG")==0)
 			{ 	registerflag=1;
-				printf("(1) ");
+				fprintf(fp2,"(1) ");
 			}
 		else if(strcmp(registertype,"BREG")==0)
 			{	registerflag=1;
-				printf("(2) ");
+				fprintf(fp2,"(2) ");
 			}
 		else if(strcmp(registertype,"CREG")==0)
 			{	registerflag=1;
-				printf("(3) ");
+				fprintf(fp2,"(3) ");
 			}
 		else if(strcmp(registertype,"DREG")==0)
 			{	registerflag=1;
-				printf("(4) ");
+				fprintf(fp2,"(4) ");
 			}
 
 	}
@@ -755,7 +757,7 @@ int main()
 				if(strcmp(LiteralTable[j].name,LitSym)==0)
 					{
 
-								printf("(LT,%d) ",j);
+								fprintf(fp2,"(LT,%d) ",j);
 
 
 						LitSymFlag=1;
@@ -766,7 +768,7 @@ int main()
 
 					strcpy(LiteralTable[ltcounter].name,LitSym);
 					LiteralTable[ltcounter].location=-1;
-					printf("(LT,%d) ",ltcounter++);
+					fprintf(fp2,"(LT,%d) ",ltcounter++);
 				}
 		}
 	else
@@ -776,7 +778,7 @@ int main()
 				if(strcmp(SymbolTable[j].name,LitSym)==0)
 					{
 
-								printf("(ST,%d) ",j);
+								fprintf(fp2,"(ST,%d) ",j);
 
 
 						LitSymFlag=1;
@@ -787,7 +789,7 @@ int main()
 
 					strcpy(SymbolTable[stcounter].name,LitSym);
 					SymbolTable[stcounter].location=-1;
-					printf("(ST,%d) ",stcounter++);
+					fprintf(fp2,"(ST,%d) ",stcounter++);
 				}
 		}
 
@@ -796,7 +798,7 @@ int main()
 //printf("%s",LitSym);
 
 	//printf("%d \n",lc);
-	printf("\n");
+	fprintf(fp2,"\n");
 	lc++;
     }
 
