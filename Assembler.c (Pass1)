@@ -184,9 +184,10 @@ int main()
 
     char *inst=NULL;
     int len =20 , i;
-    FILE* fp, *fp2;
+    FILE* fp, *fp2 , *fp3;
     fp = fopen("input.txt" , "r");
     fp2 = fopen("outputic.txt" , "w");
+    fp3 = fopen("tables.txt" , "w");
 
     if(fp==NULL)
     {
@@ -366,7 +367,8 @@ int main()
 
 
 			if(isflag==1)
-				{
+				{ 	fseek(fp2 , -4 , SEEK_CUR);
+					
 				  if(j==0)
 					{
 						// Found START
@@ -403,6 +405,7 @@ int main()
 
 						if(templcflag==0)
 							{
+			
 								fprintf(fp2,"\n Error in ORGIN statement syntax");
 							}
 						else
@@ -477,30 +480,30 @@ int main()
 
 						//Printing Symbol Table to check
 
-						printf("\n\n\n SYMBOL TABLE\n");
-						printf("\nName		Location\n");
+						fprintf(fp3,"\n\n\n SYMBOL TABLE\n");
+						fprintf(fp3,"\nName		Location\n");
 
 						for(j=1;j<stcounter;j++)
-							printf("%s		%d \n", SymbolTable[j].name , SymbolTable[j].location);
+							fprintf(fp3,"%s		%d \n", SymbolTable[j].name , SymbolTable[j].location);
 
 
 						//Printing Literal Table to check
 
-						printf("\n\n\n LITERAL TABLE\n");
-						printf("\nName		Location\n");
+						fprintf(fp3,"\n\n\n LITERAL TABLE\n");
+						fprintf(fp3,"\nName		Location\n");
 
 						for(j=1;j<ltcounter;j++)
-							printf("%s		%d\n" , LiteralTable[j].name , LiteralTable[j].location);
+							fprintf(fp3,"%s		%d\n" , LiteralTable[j].name , LiteralTable[j].location);
 
 
 
 						//Printing Pool Table to check
 
-						printf("\n\n\nPOOL TABLE\n");
-						printf("\nBatch\n");
+						fprintf(fp3,"\n\n\nPOOL TABLE\n");
+						fprintf(fp3,"\nBatch\n");
 
 						for(j=1;j<ptcounter;j++)
-							printf("%d		\n" , PoolTable[j].batch);
+							fprintf(fp3,"%d		\n" , PoolTable[j].batch);
 
 					
 						exit(0);
@@ -556,7 +559,8 @@ int main()
 						for(k=1;k<stcounter;k++)
 							if(strcmp(SymbolTable[k].name,label)==0)
 								{
-									SymbolTable[k].location=temp;
+									
+									SymbolTable[k].location= (op=='+')? temp+val:temp-val;
 									break;
 								}
 
@@ -728,6 +732,7 @@ int main()
 			{	registerflag=1;
 				fprintf(fp2,"(4) ");
 			}
+
 
 	}
 
