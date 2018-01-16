@@ -1,0 +1,26 @@
+ SYMBOL TABLE
+
+Name		Location
+A		111 
+LOOP		102 
+B		114 
+NEXT		108 
+BACK		99 
+LAST		110 
+
+
+
+ LITERAL TABLE
+
+Name		Location
+='5'		106
+='1'		107
+='1'		115
+
+
+
+POOL TABLE
+
+Batch
+1		
+3		
