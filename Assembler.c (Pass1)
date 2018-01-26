@@ -1,99 +1,5 @@
 
-
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
-
-
-struct MotTableEntry
-{
-    int opcode ;
-    char name[30];
-    int sizeofinst;
-
-} MotTable[20];
-
-
-struct PotTableEntry
-{
-	char name[30];
-} PotTable[20];
-
-struct SymbolTableEntry
-{
-	char name[20];
-	int location;
-	int value;
-} SymbolTable[20];
-
-struct LiteralTableEntry
-{
-	char name[20];
-	int location;
-} LiteralTable[20];
-
-struct PoolTableEntry
-{
-	int batch;
-} PoolTable[10];
-
-void CreateMotTable()
-{
-	    MotTable[0].opcode = 0;
-	    strcpy(MotTable[0].name,"STOP");
-	    MotTable[0].sizeofinst=1;
-
-	    MotTable[1].opcode = 1;
-	    strcpy(MotTable[1].name,"ADD");
-	    MotTable[1].sizeofinst=1;
-
-	    MotTable[2].opcode = 2;
-	    strcpy(MotTable[2].name,"SUB");
-	    MotTable[2].sizeofinst=1;
-
-	    MotTable[3].opcode = 3;
-	    strcpy(MotTable[3].name,"MULT");
-	    MotTable[3].sizeofinst=1;
-
-	    MotTable[4].opcode = 4;
-	    strcpy(MotTable[4].name,"MOVER");
-	    MotTable[4].sizeofinst=1;
-
-	    MotTable[5].opcode = 5;
-	    strcpy(MotTable[5].name,"MOVEM");
-	    MotTable[5].sizeofinst=1;
-
-	    MotTable[6].opcode = 6;
-	    strcpy(MotTable[6].name,"COMP");
-            MotTable[6].sizeofinst=1;
-
-	    MotTable[7].opcode = 7;
-	    strcpy(MotTable[7].name,"BC");
-            MotTable[7].sizeofinst=1;
-
-	    MotTable[8].opcode = 8;
-	    strcpy(MotTable[8].name,"DIV");
-            MotTable[8].sizeofinst=1;
-
-	    MotTable[9].opcode = 9;
-	    strcpy(MotTable[9].name,"READ");
-            MotTable[9].sizeofinst=1;
-
-	    MotTable[10].opcode = 10;
-	    strcpy(MotTable[10].name,"PRINT");
-	    MotTable[10].sizeofinst=1;
-
-}
-
-void CreatePotTable()
-{
-	strcpy(PotTable[0].name,"START");
-	strcpy(PotTable[1].name,"ORIGIN");
-	strcpy(PotTable[2].name,"END");
-	strcpy(PotTable[3].name,"EQU");
-	strcpy(PotTable[4].name,"LTORG");
-
-}
+#include<header.h>
 
 
 int CheckForLabel(char * inst , int n , int *stcounter , int lc)
@@ -184,10 +90,12 @@ int main()
 
     char *inst=NULL;
     int len =20 , i;
-    FILE* fp, *fp2 , *fp3;
+    FILE* fp, *fp2 , *fp3, *fp4 , *fp5;
     fp = fopen("input.txt" , "r");
     fp2 = fopen("outputic.txt" , "w");
-    fp3 = fopen("tables.txt" , "w");
+    fp3 = fopen("symboltab.txt" , "w");
+    fp4 = fopen("literaltab.txt" , "w");
+    fp5 = fopen("pooltab.txt","w");
 
     if(fp==NULL)
     {
@@ -247,7 +155,6 @@ int main()
 	}
 
 	is[z]='\0';
-	//printf("%s",is);
         for(j=0;j<11;j++)
         {
             if(strcmp(is , MotTable[j].name)==0)
@@ -479,31 +386,25 @@ int main()
 
 
 						//Printing Symbol Table to check
-
-						fprintf(fp3,"\n\n\n SYMBOL TABLE\n");
-						fprintf(fp3,"\nName		Location\n");
-
+						
+						
 						for(j=1;j<stcounter;j++)
-							fprintf(fp3,"%s		%d \n", SymbolTable[j].name , SymbolTable[j].location);
+							fprintf(fp3,"%s\t%d\n", SymbolTable[j].name , SymbolTable[j].location);
 
 
 						//Printing Literal Table to check
 
-						fprintf(fp3,"\n\n\n LITERAL TABLE\n");
-						fprintf(fp3,"\nName		Location\n");
 
 						for(j=1;j<ltcounter;j++)
-							fprintf(fp3,"%s		%d\n" , LiteralTable[j].name , LiteralTable[j].location);
+							fprintf(fp4,"%s		%d\n" , LiteralTable[j].name , LiteralTable[j].location);
 
 
 
 						//Printing Pool Table to check
 
-						fprintf(fp3,"\n\n\nPOOL TABLE\n");
-						fprintf(fp3,"\nBatch\n");
 
 						for(j=1;j<ptcounter;j++)
-							fprintf(fp3,"%d		\n" , PoolTable[j].batch);
+							fprintf(fp5,"%d		\n" , PoolTable[j].batch);
 
 					
 						exit(0);
